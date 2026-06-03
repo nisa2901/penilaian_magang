@@ -54,13 +54,15 @@ class BuYuni_model extends CI_Model {
 
     public function get_by_id($id)
     {
-        return $this->db
-            ->select('bu_yuni.*, data_magang.user_id')
-            ->from('bu_yuni')
-            ->join('data_magang', 'data_magang.id = bu_yuni.data_magang_id')
-            ->where('bu_yuni.id', $id)
-            ->get()
-            ->row_array();
+        $this->db->select('bu_yuni.*, users.email_pribadi');
+        $this->db->from('bu_yuni');
+
+        $this->db->join('data_magang', 'data_magang.id = bu_yuni.data_magang_id', 'left');
+        $this->db->join('users', 'users.id = data_magang.user_id', 'left');
+
+        $this->db->where('bu_yuni.id', $id);
+
+        return $this->db->get()->row_array();
     }
 
     public function insert($data){

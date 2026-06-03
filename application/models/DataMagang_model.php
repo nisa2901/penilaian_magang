@@ -31,7 +31,7 @@ class DataMagang_model extends CI_Model {
     /* =====================
        PENILAIAN TERBARU
     ====================== */
-    public function get_penilaian_terbaru($limit = 10)
+    public function get_penilaian_terbaru($limit = 100)
     {
         return $this->db
             ->select('*')
@@ -42,6 +42,7 @@ class DataMagang_model extends CI_Model {
             ->limit($limit)
             ->get()
             ->result_array();
+        $this->db->where('tanggal_dinilai IS NOT NULL', null, false);
     }
 
 
@@ -54,11 +55,17 @@ class DataMagang_model extends CI_Model {
 
     public function simpan_atau_update($data)
     {
+        if(!isset($data['user_id']) || $data['user_id'] <= 0){
+            log_message('error','User ID kosong saat simpan data magang');
+            return false;
+        }
         // =============================
         // SIMPAN / UPDATE data_magang
         // =============================
          $existing = $this->db
-            ->get_where('data_magang', ['user_id' => $data['user_id']])
+            ->where('user_id', $data['user_id'])
+            ->limit(1)
+            ->get('data_magang')
             ->row();
 
         if ($existing) {
@@ -79,6 +86,8 @@ class DataMagang_model extends CI_Model {
                 'nama_lengkap'     => $data['nama_lengkap'],
                 'angkatan'         => $data['angkatan'],
                 'universitas'      => $data['universitas'],
+                'unit_penempatan'  => $data['unit_penempatan'] ?? null, // ✅ TAMBAHAN
+                'email_pribadi'    => $data['email_pribadi'] ?? null,   // ✅ TAMBAHAN
                 'email_universitas'=> $data['email_universitas'] ?? null,
                 'tanggal_mulai'    => $data['tanggal_mulai'],
                 'tanggal_selesai'  => $data['tanggal_selesai'],
@@ -103,11 +112,13 @@ class DataMagang_model extends CI_Model {
         // =============================
         if (!empty($data['sekolah'])) {
 
-            $bu_yuni = [
+           $bu_yuni = [
                 'data_magang_id'   => $data_magang_id,
                 'nama_lengkap'     => $data['nama_lengkap'],
                 'angkatan'         => $data['angkatan'],
                 'sekolah'          => $data['sekolah'],
+                'unit_penempatan'  => $data['unit_penempatan'] ?? null, // ✅ TAMBAHAN
+                'email_pribadi'    => $data['email_pribadi'] ?? null,   // ✅ TAMBAHAN
                 'email_sekolah'    => $data['email_sekolah'] ?? null,
                 'tanggal_mulai'    => $data['tanggal_mulai'],
                 'tanggal_selesai'  => $data['tanggal_selesai'],

@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<title>Login Siswa — Penilaian Magang</title>
+<title>Login Peserta — Penilaian Magang</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -212,7 +212,7 @@ html, body {
   <div class="center-wrapper">
     <div class="glass-card">
 
-      <h5>LOGIN SISWA</h5>
+      <h5>LOGIN PESERTA</h5>
 
       <?php if(!empty($error)): ?>
         <div class="alert alert-danger"><?= $error ?></div>

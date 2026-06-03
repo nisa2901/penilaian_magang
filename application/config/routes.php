@@ -6,7 +6,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Default Routes
 |--------------------------------------------------------------------------
 */
-$route['default_controller'] = 'auth/login';
+$route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
@@ -82,4 +82,8 @@ $route['peserta/upload/(:num)'] = 'peserta/upload/$1';
 
 $route['peserta/dashboard'] = 'peserta/dashboard';
 $route['peserta/simpan']    = 'peserta/simpan';
+
+$route['logbook/edit/(:num)'] = 'logbook/edit/$1';
+$route['logbook/update'] = 'logbook/update';
+$route['logbook/hapus/(:num)'] = 'logbook/hapus/$1';
 

@@ -36,13 +36,15 @@ class PakHani_model extends CI_Model {
         DATA MAHASISWA
     ====================== */
     public function get_angkatan(){
-        return $this->db
-            ->select('angkatan')
-            ->group_by('angkatan')
-            ->order_by('angkatan','DESC')
-            ->get($this->table)
-            ->result_array();
-    }
+    return $this->db
+        ->select('angkatan')
+        ->where('angkatan IS NOT NULL', null, false) // filter NULL
+        ->where('angkatan !=', '') // filter kosong
+        ->group_by('angkatan')
+        ->order_by('angkatan','DESC')
+        ->get($this->table)
+        ->result_array();
+}
 
     public function get_by_angkatan($angkatan){
         return $this->db
@@ -51,18 +53,22 @@ class PakHani_model extends CI_Model {
             ->get($this->table)
             ->result_array();
     }
-
+   
     public function get_by_id($id)
     {
-        return $this->db
-            ->select('pak_hani.*, data_magang.user_id')
-            ->from('pak_hani')
-            ->join('data_magang', 'data_magang.id = pak_hani.data_magang_id')
-            ->where('pak_hani.id', $id)
-            ->get()
-            ->row_array();
-    }
+        $this->db->select('pak_hani.*, users.email_pribadi');
+        $this->db->from('pak_hani');
 
+        // join ke data_magang dulu
+        $this->db->join('data_magang', 'data_magang.id = pak_hani.data_magang_id', 'left');
+
+        // baru join ke users
+        $this->db->join('users', 'users.id = data_magang.user_id', 'left');
+
+        $this->db->where('pak_hani.id', $id);
+
+        return $this->db->get()->row();
+    }
     public function insert($data){
         return $this->db->insert($this->table, $data);
     }

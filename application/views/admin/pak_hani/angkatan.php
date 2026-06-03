@@ -1,5 +1,4 @@
 <?php $this->load->view('admin/layout/header'); ?>
-<?php $this->load->view('admin/layout/sidebar'); ?>
 
 <style>
 /* =================== CARD EFFECT DASHBOARD =================== */
@@ -57,9 +56,25 @@
 }
 </style>
 
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <h5 class="p-3">ADMIN</h5>
+
+    <a href="<?= site_url('admin/dashboard') ?>">Dashboard</a>
+
+    <a href="<?= site_url('admin/data_magang') ?>">Data Magang</a>
+
+    <a href="<?= site_url('admin/rekap') ?>">Rekap Data Magang</a>
+
+    <a href="<?= site_url('admin/logout') ?>">Logout</a>
+
+</div>
+
 <div class="content">
     <div class="mb-4">
-        <h3 class="fw-bold">Data Mahasiswa Pak Hani</h3>
+        <h3 class="fw-bold">Tahun Angkatan</h3>
         <p class="text-muted">Pilih angkatan untuk melihat data Mahasiswa</p>
     </div>
 

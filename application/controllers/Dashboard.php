@@ -2,9 +2,18 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Dashboard extends CI_Controller{
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // load model
+        $this->load->model('DataMagang_model');
+    }
+
     public function index()
     {
-       $penilaianTerbaru = $this->DataMagang_model->get_penilaian_terbaru();
+        $penilaianTerbaru = $this->DataMagang_model->get_penilaian_terbaru();
 
         $dataUnik = [];
         $cek = [];
@@ -17,8 +26,9 @@ class Dashboard extends CI_Controller{
         }
 
         $data['penilaianTerbaru'] = $dataUnik;
-        $this->load->view('dashboard', $data);
 
+        // load view
+        $this->load->view('peserta/dashboard', $data);
+    }
 
-}
 }

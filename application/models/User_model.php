@@ -30,9 +30,11 @@ class User_model extends CI_Model {
     }
 
     public function get_by_role($role){
-        return $this->db
-            ->where('role', $role)
-            ->get($this->table)
-            ->result_array();
-    }
+    $this->db->select('users.*, data_magang.unit_penempatan, data_magang.sekolah');
+    $this->db->from('users');
+    $this->db->join('data_magang', 'data_magang.user_id = users.id', 'left');
+    $this->db->where('users.role', $role);
+
+    return $this->db->get()->result_array();
+}
 }

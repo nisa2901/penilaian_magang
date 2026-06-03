@@ -140,6 +140,13 @@ body {
     border-radius: 8px;
     border: 1px solid #ccc;
 }
+.form-row select {
+    flex: 1;
+    min-width: 250px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
 
 /* ================= BUTTON ================= */
 .buttons {
@@ -178,21 +185,44 @@ alert("<?= $this->session->flashdata('success') ?>");
     <!-- SIDEBAR -->
     <div class="sidebar">
         <h3>PESERTA MAGANG</h3>
-        <a href="#">Input Data</a>
+        <a href="dashboard">Input Data</a>
+         <!-- MENU LOGBOOK -->
+        <a href="<?= base_url('logbook') ?>" class="menu">Logbook</a>
         <a href="<?= site_url('auth/logout') ?>" class="logout">Logout</a>
     </div>
 
     <!-- CONTENT -->
-    <div class="content">
-
-        <div class="header">
+    <div class="content"> <div class="header">
             Sistem Penilaian Magang<br>
             Dinas Kependudukan dan Pencatatan Sipil
         </div>
 
+         <div class="alert alert-info" style="border-radius:10px;">
+                <strong>Informasi Kriteria Penilaian</strong>
+                <hr style="margin:8px 0;">
+
+                <ul style="margin-bottom:0;">
+                    <li><b>Disiplin</b> → Ketepatan waktu dan kepatuhan terhadap aturan</li>
+                    <li><b>Kehadiran</b> → Tingkat kehadiran selama magang</li>
+                    <li><b>Tanggung Jawab</b> → Keseriusan dalam menyelesaikan tugas</li>
+                    <li><b>Kejujuran</b> → Integritas dalam bekerja</li>
+                    <li><b>Kerjasama Tim</b> → Kemampuan bekerja dalam tim</li>
+                    <li><b>Inisiatif</b> → Kemampuan mengambil tindakan tanpa disuruh</li>
+                    <li><b>Kerapihan Kerja</b> → Keteraturan dan kerapihan hasil kerja</li>
+                    <li><b>Kemampuan Tugas</b> → Kemampuan menyelesaikan pekerjaan</li>
+                    <li><b>Penguasaan Skill</b> → Kemampuan teknis sesuai bidang</li>
+                    <li><b>Komunikasi</b> → Kemampuan berkomunikasi dengan baik</li>
+                </ul>
+
+                <small style="color:#555;">
+                    * Nilai akan diberikan oleh pembimbing berdasarkan kriteria di atas.
+                </small>
+            </div>
+
         <div class="card">
             <strong>Input Data Magang</strong>
             <hr>
+
 
             <form method="post" action="<?= site_url('peserta/save') ?>" enctype="multipart/form-data">
 
@@ -244,6 +274,21 @@ alert("<?= $this->session->flashdata('success') ?>");
                            value="<?= $peserta['tanggal_selesai'] ?? '' ?>" required>
                 </div>
 
+                  <div class="form-row">
+                    <label>Unit Penempatan</label>
+                    <select name="unit_penempatan" required>
+                        <option value="">-- Pilih Unit --</option>
+                        <option value="ARSIPARIS" <?= ($peserta['unit_penempatan'] ?? '')=='ARSIPARIS'?'selected':''; ?>>ARSIPARIS</option>
+                        <option value="SEKRETARIAT" <?= ($peserta['unit_penempatan'] ?? '')=='SEKRETARIAT'?'selected':''; ?>>SEKRETARIAT</option>
+                        <option value="UMPEG" <?= ($peserta['unit_penempatan'] ?? '')=='UMPEG'?'selected':''; ?>>UMPEG</option>
+                        <option value="CAPIL" <?= ($peserta['unit_penempatan'] ?? '')=='CAPIL'?'selected':''; ?>>CAPIL</option>
+                        <option value="DAFDUK" <?= ($peserta['unit_penempatan'] ?? '')=='DAFDUK'?'selected':''; ?>>DAFDUK</option>
+                        <option value="PIAK" <?= ($peserta['unit_penempatan'] ?? '')=='PIAK'?'selected':''; ?>>PIAK</option>
+                        <option value="RENKEU" <?= ($peserta['unit_penempatan'] ?? '')=='RENKEU'?'selected':''; ?>>RENKEU</option>
+                    </select>
+                </div>
+
+
                 <div class="form-row">
                     <label>Upload Dokumen (PDF)</label>
                     <input type="file" name="dokumen" accept=".pdf">
@@ -254,7 +299,16 @@ alert("<?= $this->session->flashdata('success') ?>");
                         onclick="if(confirm('Yakin ingin reset semua data magang?')){window.location.href='<?= site_url('peserta/reset_data') ?>'}">
                         Reset
                     </button>
-                    <button type="submit">Simpan</button>
+                    <button type="submit" id="btnSubmit">Simpan</button>
+                </div>
+
+                <script>
+                document.querySelector("form").addEventListener("submit", function(){
+                    const btn = document.getElementById("btnSubmit");
+                    btn.disabled = true;
+                    btn.innerText = "Menyimpan...";
+                });
+                </script>
                 </div>
 
             </form>

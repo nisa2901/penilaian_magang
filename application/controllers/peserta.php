@@ -21,12 +21,34 @@ class Peserta extends CI_Controller {
             ->get_where('data_magang', ['user_id' => $user_id])
             ->row_array();
 
+         $data['peserta'] = $peserta;
+
+    // 🔥 TAMBAHAN PENTING
+    $data['sekolah'] = '';
+    $data['universitas'] = '';
+
+    if (!empty($peserta['sekolah'])) {
+        $data['sekolah'] = $peserta['sekolah'];
+    }
+
+    if (!empty($peserta['universitas'])) {
+        $data['universitas'] = $peserta['universitas'];
+    }
+
         $this->load->view('peserta/dashboard', $data);
     }
 
     public function save()
     {
-        $user_id = $this->session->userdata('user_id');
+        
+        if (!$this->session->userdata('user_id')) {
+        redirect('auth/login');
+    }
+        $user_id = (int) $this->session->userdata('user_id');
+
+        if ($user_id <= 0) {
+            show_error("Session user tidak valid. Silakan login kembali.");
+        }
 
         $data = [
             'user_id'           => $user_id,
@@ -38,6 +60,7 @@ class Peserta extends CI_Controller {
             'email_universitas' => $this->input->post('email_universitas'),
             'tanggal_mulai'     => $this->input->post('tanggal_mulai'),
             'tanggal_selesai'   => $this->input->post('tanggal_selesai'),
+            'unit_penempatan'   => $this->input->post('unit_penempatan')
 
         ];
 
@@ -62,6 +85,10 @@ if (!empty($_FILES['dokumen']['name'])) {
         show_error($this->upload->display_errors());
         return;
     }
+
+    if(empty($user_id)){
+        show_error("User tidak valid");
+}
 
     // SIMPAN KE KOLOM YANG BENAR
     $data['dokumen_pendaftaran'] = $this->upload->data('file_name');

@@ -3,11 +3,16 @@
 
 <style>
 /* ================= DASHBOARD STYLE ================= */
-.content {
-    animation: fadeUp .6s ease;
+body {
+    background: #f4f6f9;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-/* Animasi */
+.content {
+    animation: fadeUp .6s ease;
+    padding: 20px;
+}
+
 @keyframes fadeUp {
     from {
         opacity: 0;
@@ -21,79 +26,89 @@
 
 /* ================= CARD BOX ================= */
 .card-box {
+    background: #fff !important;
     padding: 22px;
-    border-radius: 14px;
-    color: #fff;
-    box-shadow: 0 10px 25px rgba(0,0,0,.15);
-    transition: all .35s ease;
-    position: relative;
-    overflow: hidden;
+    border-radius: 12px;
+    color: #2c3e50 !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    transition: .3s;
+    border-left: 6px solid;
 }
 
 .card-box h3 {
-    margin-top: 6px;
-    font-weight: 700;
-}
-
-/* efek highlight */
-.card-box::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255,255,255,.25),
-        transparent
-    );
-    transition: .6s;
-}
-
-.card-box:hover::after {
-    left: 100%;
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 35px;
+    color: #2c3e50 !important;
 }
 
 .card-box:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 40px rgba(0,0,0,.25);
+    transform: translateY(-4px);
 }
 
-/* ================= SECTION TITLE ================= */
-.section-title {
-    margin-top: 30px;
-    font-weight: 700;
-    color: #2c3e50;
+/* warna card */
+.bg-primary {
+    border-left-color: #3498db !important;
+}
+
+.bg-success {
+    border-left-color: #2ecc71 !important;
+}
+
+.bg-secondary {
+    border-left-color: #ff6a00 !important;
+}
+
+/* ================= SEARCH ================= */
+.search-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.search-input {
+    width: 420px;
+    border-radius: 30px;
+    padding: 14px 18px;
+    border: none;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
 }
 
 /* ================= TABLE ================= */
 .table {
-    background: #fff;
+    background: white;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0,0,0,.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
 }
 
 .table thead th {
-    vertical-align: middle;
-    font-size: 14px;
+    background: #0c0e0f !important;
+    color: white !important;
+    text-align: center;
+    font-weight: 600;
 }
 
-.table tbody tr {
-    transition: all .25s ease;
+.table tbody tr:nth-child(even) {
+    background: #f9f9f9;
 }
 
 .table tbody tr:hover {
-    background-color: rgba(0,123,255,.08);
-    transform: scale(1.01);
+    background: #eef5fb;
+}
+
+/* ================= TITLE ================= */
+.section-title {
+    font-weight: bold;
+    color: #2c3e50;
 }
 
 /* ================= HR ================= */
 hr {
-    margin: 28px 0;
-    border-top: 2px dashed #ddd;
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 25px 0;
 }
 </style>
 
@@ -126,7 +141,14 @@ hr {
 
 <hr>
 
-<h5 class="section-title">Penilaian Terbaru</h5>
+<h5 class="section-title">Penilaian Terbaru</h5> 
+
+<div style="display:flex; justify-content:center; margin-bottom:20px;">
+    <input type="text" id="searchDashboard" 
+           placeholder="Cari nama / sekolah / universitas..." 
+           class="form-control" 
+           style="width:350px; text-align:center;">
+</div>
 
 <div class="table-responsive mt-3">
 <table class="table table-bordered table-striped align-middle">
@@ -141,12 +163,15 @@ hr {
 </tr>
 </thead>
 
-<tbody>
+<tbody id="tableDashboard">
 <?php
 $unik = [];
 
 if (!empty($penilaian_terbaru)):
     foreach ($penilaian_terbaru as $p):
+
+        // filter hanya yang sudah dinilai
+        if (empty($p['dokumen_penilaian'])) continue;
 
         $key = $p['nama_lengkap'] . '-' . $p['angkatan'];
         if (isset($unik[$key])) continue;
@@ -157,7 +182,11 @@ if (!empty($penilaian_terbaru)):
   <td><?= !empty($p['sekolah']) ? $p['sekolah'] : $p['universitas']; ?></td>
   <td><?= $p['tanggal_mulai']; ?></td>
   <td><?= $p['tanggal_selesai']; ?></td>
-  <td><?= $p['tanggal_dinilai'] ?? date('Y-m-d', strtotime($p['created_at'])); ?></td>
+  <td>
+    <?= !empty($p['tanggal_dinilai']) 
+        ? $p['tanggal_dinilai'] 
+        : '-' ?>
+  </td>
 </tr>
 <?php
     endforeach;
@@ -167,11 +196,23 @@ else:
   <td colspan="5" class="text-center text-muted">Belum ada penilaian</td>
 </tr>
 <?php endif; ?>
+
 </tbody>
 
 </table>
 </div>
 
 </div>
+<script>
+document.getElementById("searchDashboard").addEventListener("keyup", function() {
+    let input = this.value.toLowerCase();
+    let rows = document.querySelectorAll("#tableDashboard tr");
+
+    rows.forEach(function(row) {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(input) ? "" : "none";
+    });
+});
+</script>
 
 <?php $this->load->view('admin/layout/footer'); ?>
